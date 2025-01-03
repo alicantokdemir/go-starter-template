@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -10,7 +11,17 @@ import (
 )
 
 func main() {
-	app := pocketbase.New()
+	currentPath, err := os.Getwd()
+
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+		return
+	}
+
+	app := pocketbase.NewWithConfig(pocketbase.Config{
+		DefaultDataDir: fmt.Sprintf("%s/pb_data", currentPath),
+	})
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		// serves static files from the provided public dir (if exists)
